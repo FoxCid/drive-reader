@@ -1,13 +1,16 @@
+ # Drive Reader Flask app - sécurisé et prêt pour Render
 import os
 from flask import Flask, jsonify
 from google.oauth2.credentials import Credentials
-from googleapiclient.discovery import build, errors
+from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
 from googleapiclient.http import MediaIoBaseDownload
 import io
 import pandas as pd
 
 app = Flask(__name__)
 
+# Chargement des variables sensibles depuis les variables d'environnement
 ACCESS_TOKEN = os.environ.get('ACCESS_TOKEN')
 REFRESH_TOKEN = os.environ.get('REFRESH_TOKEN')
 CLIENT_ID = os.environ.get('CLIENT_ID')
@@ -28,15 +31,18 @@ def get_service():
 
 @app.route('/list-files', methods=['GET'])
 def list_files():
-    service = get_service()
-    results = service.files().list(pageSize=10, fields="files(id, name, mimeType)").execute()
-    items = results.get('files', [])
-    return jsonify({'files': items})
+    try:
+        service = get_service()
+        results = service.files().list(pageSize=10, fields="files(id, name, mimeType)").execute()
+        items = results.get('files', [])
+        return jsonify({'files': items})
+    except HttpError as error:
+        return jsonify({'error': str(error)}), 500
 
 @app.route('/read-excel/<file_id>', methods=['GET'])
 def read_excel(file_id):
-    service = get_service()
     try:
+        service = get_service()
         request = service.files().get_media(fileId=file_id)
         fh = io.BytesIO()
         downloader = MediaIoBaseDownload(fh, request)
@@ -46,7 +52,7 @@ def read_excel(file_id):
         fh.seek(0)
         df = pd.read_excel(fh)
         return jsonify(df.to_dict(orient='records'))
-    except errors.HttpError as error:
+    except HttpError as error:
         return jsonify({'error': str(error)}), 500
 
 if __name__ == '__main__':
