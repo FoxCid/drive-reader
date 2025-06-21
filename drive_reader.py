@@ -1,16 +1,16 @@
- # Drive Reader Flask app - sécurisé et prêt pour Render
+# drive_reader.py – Flask app sécurisé pour Render + Google Drive API
 import os
+import io
+import pandas as pd
 from flask import Flask, jsonify
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
-from googleapiclient.errors import HttpError
 from googleapiclient.http import MediaIoBaseDownload
-import io
-import pandas as pd
+from googleapiclient.errors import HttpError
 
 app = Flask(__name__)
 
-# Chargement des variables sensibles depuis les variables d'environnement
+# Variables sensibles récupérées depuis les variables d'environnement
 ACCESS_TOKEN = os.environ.get('ACCESS_TOKEN')
 REFRESH_TOKEN = os.environ.get('REFRESH_TOKEN')
 CLIENT_ID = os.environ.get('CLIENT_ID')
@@ -56,5 +56,5 @@ def read_excel(file_id):
         return jsonify({'error': str(error)}), 500
 
 if __name__ == '__main__':
-port = int(os.environ.get('PORT', 5000))
-app.run(host='0.0.0.0', port=port)
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)
