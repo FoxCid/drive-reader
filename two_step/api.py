@@ -366,14 +366,15 @@ def run_two_step(
     resp = synthesize_answer(
         question=question,
         role=role,
-        ranked_chunks=(base_std if use_context_only else ranked),
+        ranked_chunks=selected,              # <- utiliser les chunks réellement retenus
         summary_context=ctx_summary,
     )
     answer, sources_dict, used_debug, _ = _normalize_synthesize_output(
         resp,
-        ranked_chunks=(base_std if use_context_only else ranked),
+        ranked_chunks=selected,              # <- cohérence réponse/sources
         summary_context=ctx_summary,
     )
+
 
     sources_list = sources_dict.get("sources", []) if isinstance(sources_dict, dict) else []
     return answer, sources_list, used_debug, ctx_summary
