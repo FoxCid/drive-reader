@@ -1,0 +1,33 @@
+﻿# --- Python/venv ---
+__pycache__/
+*.pyc
+.venv/
+venv*/
+
+# --- Données volumineuses/volatiles ---
+data/index/
+data/feedback/
+data/docs/**        # si ces docs viennent de Drive et ne doivent pas partir sur Git
+!data/docs/README.md
+
+# --- Secrets ---
+.env
+
+# --- Outils/tests ---
+.pytest_cache/
+.coverage
+htmlcov/
+
+credentials.json
+monitoring_log.jsonl
+qa_feedback.jsonl
+data/
+outputs/
+result/
+results/
+*.pdf
+*.jpeg
+*.jpg
+
+.DS_Store
+
