@@ -28,3 +28,6 @@ results/
 *.pdf
 *.jpeg
 *.jpg
+
+.DS_Store
+
